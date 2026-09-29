@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no" />
+<title>ARCHIVE//00</title>
+<style>
+:root{
+  --bg:#090b10; --panel:#11151d; --panel2:#171d27; --text:#eef3f8; --muted:#8e9aab;
+  --accent:#7ee7c4; --accent2:#8ab4ff; --danger:#ff8a9d; --gold:#ffd479;
+  --line:#263041;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:linear-gradient(180deg,#07090d,#0d1118 35%,#090b10);color:var(--text);
+font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic UI","Yu Gothic",sans-serif;min-height:100vh}
+button{font:inherit;color:inherit}
+.wrap{max-width:760px;margin:auto;padding:16px 14px calc(110px + env(safe-area-inset-bottom))}
+.header{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:12px}
+.brand{font-weight:800;letter-spacing:.08em}.sub{color:var(--muted);font-size:12px;margin-top:3px}
+.lv{font-variant-numeric:tabular-nums;text-align:right}.lv b{font-size:20px}
+.card{background:rgba(17,21,29,.94);border:1px solid var(--line);border-radius:18px;padding:14px;margin:10px 0;box-shadow:0 12px 30px rgba(0,0,0,.18)}
+.row{display:flex;gap:10px;align-items:center}.between{justify-content:space-between}.grow{flex:1}
+.bar{height:8px;background:#222a37;border-radius:99px;overflow:hidden;margin-top:7px}.bar>i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:99px}
+.statgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.stat{background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:10px;text-align:center}
+.stat b{display:block;font-size:18px;font-variant-numeric:tabular-nums}.stat span{font-size:11px;color:var(--muted)}
+.zone{font-size:22px;font-weight:800;margin:2px 0 4px}.desc{color:#b7c1cf;font-size:14px;line-height:1.6}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.btn{border:none;border-radius:15px;padding:14px 12px;background:#202838;border:1px solid #334059;font-weight:700}
+.btn.primary{background:linear-gradient(135deg,#1d6757,#245f70);border-color:#4f9c91}
+.btn:active{transform:scale(.985)}
+.tag{display:inline-block;padding:4px 8px;border-radius:999px;background:#202838;border:1px solid #344055;color:#b9c5d4;font-size:11px;margin-right:5px}
+.log{min-height:144px;max-height:230px;overflow:auto;padding-right:3px}.entry{padding:10px 0;border-bottom:1px solid #202837;font-size:14px;line-height:1.55}.entry:first-child{padding-top:0}
+.new{color:var(--accent);font-weight:800}.rare{color:var(--gold);font-weight:800}.bad{color:var(--danger)}
+.bottom{position:fixed;z-index:5;left:0;right:0;bottom:0;background:rgba(7,9,13,.91);backdrop-filter:blur(18px);border-top:1px solid #222b3a;padding:8px 10px calc(8px + env(safe-area-inset-bottom))}
+.nav{max-width:760px;margin:auto;display:grid;grid-template-columns:repeat(4,1fr);gap:7px}.nav button{background:transparent;border:none;padding:9px 4px;border-radius:12px;color:#8290a3;font-size:11px}.nav button.active{background:#17202c;color:var(--text)}
+.view{display:none}.view.active{display:block}
+h2{font-size:17px;margin:2px 0 10px}.item{display:flex;gap:11px;padding:11px 0;border-bottom:1px solid #202837}.ico{width:42px;height:42px;border-radius:12px;background:#202938;display:grid;place-items:center;font-size:21px}.item b{font-size:14px}.item small{display:block;color:var(--muted);margin-top:3px;line-height:1.35}
+.locked{opacity:.38;filter:saturate(.3)}
+.upg{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid #202837}.upg button{white-space:nowrap;padding:9px 12px;border-radius:12px;border:1px solid #3a465c;background:#202838}
+.progressRing{width:74px;height:74px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--accent) var(--p),#202938 0);position:relative}.progressRing:after{content:"";position:absolute;inset:7px;border-radius:50%;background:var(--panel)}.progressRing b{z-index:1;font-size:15px}
+.modal{position:fixed;inset:0;z-index:10;background:rgba(0,0,0,.72);display:none;align-items:flex-end;justify-content:center}.modal.show{display:flex}
+.sheet{width:min(760px,100%);background:#121720;border:1px solid #2b3546;border-radius:24px 24px 0 0;padding:20px 16px calc(20px + env(safe-area-inset-bottom));box-shadow:0 -30px 60px rgba(0,0,0,.4)}
+.sheet h3{margin:0 0 7px}.sheet .big{font-size:36px;margin:8px 0}.sheet p{color:#b7c1cf;line-height:1.65}
+.quote{padding:12px;border-left:3px solid var(--accent2);background:#151c27;border-radius:8px;color:#c9d3df;font-size:13px}
+.code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#9cc7ff}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header">
+    <div><div class="brand">ARCHIVE//00</div><div class="sub">未知領域観測・収集システム</div></div>
+    <div class="lv"><span class="sub">OBSERVER</span><br><b id="lv">Lv.1</b></div>
+  </div>
+
+  <section id="v-explore" class="view active">
+    <div class="card">
+      <div class="row between">
+        <div class="grow"><div class="sub">観測レベル</div><b id="xpText">0 / 100 XP</b><div class="bar"><i id="xpBar" style="width:0%"></i></div></div>
+        <div class="progressRing" id="ring" style="--p:0%"><b id="pct">0%</b></div>
+      </div>
+    </div>
+
+    <div class="statgrid">
+      <div class="stat"><b id="credits">40</b><span>CREDITS</span></div>
+      <div class="stat"><b id="discoveries">0</b><span>発見</span></div>
+      <div class="stat"><b id="streak">0</b><span>連続新発見</span></div>
+    </div>
+
+    <div class="card">
+      <div class="sub">CURRENT ZONE</div>
+      <div class="zone" id="zoneName">第0観測区画</div>
+      <div class="desc" id="zoneDesc">閉鎖された地下観測施設。長期間停止していた端末が、あなたの接続を検知して再起動した。</div>
+      <div style="margin-top:8px"><span class="tag" id="energyTag">ENERGY 6/6</span><span class="tag" id="scanTag">SCAN Lv.1</span></div>
+      <div class="actions">
+        <button class="btn primary" onclick="explore()">探索する</button>
+        <button class="btn" onclick="survey()">広域スキャン</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>観測ログ</h2>
+      <div class="log" id="log"></div>
+    </div>
+  </section>
+
+  <section id="v-archive" class="view">
+    <div class="card">
+      <h2>ARCHIVE</h2>
+      <div class="desc">発見した標本・遺物・現象は永久保存される。同一対象でも高品質個体なら記録更新。</div>
+      <div id="archiveList"></div>
+    </div>
+  </section>
+
+  <section id="v-base" class="view">
+    <div class="card">
+      <h2>観測拠点</h2>
+      <div id="upgrades"></div>
+    </div>
+    <div class="card">
+      <h2>アンロック済み区画</h2>
+      <div id="zones"></div>
+    </div>
+  </section>
+
+  <section id="v-status" class="view">
+    <div class="card">
+      <h2>STATUS</h2>
+      <div class="statgrid">
+        <div class="stat"><b id="sRuns">0</b><span>探索回数</span></div>
+        <div class="stat"><b id="sRare">0</b><span>希少発見</span></div>
+        <div class="stat"><b id="sBest">0</b><span>最高品質</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <h2>実績</h2>
+      <div id="achievements"></div>
+    </div>
+    <div class="card">
+      <h2>セーブ</h2>
+      <div class="desc">進行状況はこのブラウザ内に自動保存されます。</div>
+      <div class="actions"><button class="btn" onclick="exportSave()">セーブ書き出し</button><button class="btn" onclick="resetGame()">初期化</button></div>
+    </div>
+  </section>
+</div>
+
+<div class="bottom">
+  <div class="nav">
+    <button class="active" onclick="showView('explore',this)">探索</button>
+    <button onclick="showView('archive',this)">図鑑</button>
+    <button onclick="showView('base',this)">拠点</button>
+    <button onclick="showView('status',this)">記録</button>
+  </div>
+</div>
+
+<div class="modal" id="modal" onclick="closeModal(event)">
+  <div class="sheet" id="sheet"></div>
+</div>
+
+<script>
+const ZONES=[
+ {name:"第0観測区画",desc:"閉鎖された地下観測施設。古い機材と未知の残留反応が眠る。",unlock:0, pool:["欠けた認証キー","冷却液の結晶","旧型観測レンズ","識別不能な種子","微弱な青色信号","停止した小型ドローン"]},
+ {name:"水没アーカイブ",desc:"施設下層。腰まで水に沈んだ保管庫。記録媒体がまだ生きている。",unlock:8,pool:["防水記録セル","透明な甲殻片","発光藻サンプル","沈んだ職員証","無音の通信機","銀色の魚影"]},
+ {name:"地表・灰色庭園",desc:"外気へ通じる庭園。植物はあるが、既知の分類に一致しない。",unlock:18,pool:["逆巻きの葉","温度を持つ石","六角花粉","白い果実","空洞の樹皮","遠方の足跡"]},
+ {name:"第7境界線",desc:"地図に存在しない区域。観測ログが周期的に欠落する。",unlock:32,pool:["時刻のずれた時計","反射しない金属片","黒い羽根","二重化した標識","無名の写真","帰還信号"]},
+ {name:"ZERO FIELD",desc:"観測網の外側。ここから先は、あなた自身の記録が観測対象になる。",unlock:50,pool:["観測者の残響","未送信メッセージ","空の標本瓶","座標0,0","存在しない鍵","最後のページ"]}
+];
+const RARITIES=[["COMMON",.62,1,10],["UNCOMMON",.25,2,20],["RARE",.10,4,45],["ANOMALY",.03,8,100]];
+const ACH=[
+ ["最初の記録",s=>s.disc>=1],["収集癖",s=>s.disc>=10],["観測者",s=>s.runs>=25],
+ ["希少性を知る者",s=>s.rare>=5],["アーカイブ30%",s=>completion(s)>=30],["境界到達",s=>s.zone>=3],
+ ["50種収集",s=>s.disc>=50],["品質90+",s=>s.best>=90]
+];
+let S=load()||{xp:0,credits:40,energy:6,maxEnergy:6,scan:1,disc:0,runs:0,rare:0,best:0,streak:0,zone:0,items:{},log:["端末が再起動した。<span class='code'>ARCHIVE//00 ONLINE</span>。"],wide:0};
+
+function save(){localStorage.setItem("archive00-save",JSON.stringify(S))}
+function load(){try{return JSON.parse(localStorage.getItem("archive00-save"))}catch(e){return null}}
+function level(){return 1+Math.floor(S.xp/100)}
+function completion(){
+ const total=ZONES.reduce((a,z)=>a+z.pool.length,0);
+ return Math.round(Object.keys(S.items).length/total*100);
+}
+function maxZoneUnlocked(){
+ let idx=0; ZONES.forEach((z,i)=>{if(S.disc>=z.unlock)idx=i}); return idx;
+}
+function addLog(t){S.log.unshift(t);S.log=S.log.slice(0,30)}
+function rollRarity(){
+ let r=Math.random(),acc=0;
+ for(const x of RARITIES){acc+=x[1];if(r<=acc)return x}
+ return RARITIES[0]
+}
+function quality(rarity){let base=45+Math.floor(Math.random()*41); if(rarity[0]=="RARE")base+=5;if(rarity[0]=="ANOMALY")base+=10;return Math.min(100,base)}
+function explore(){
+ if(S.energy<=0){showMsg("ENERGY EMPTY","観測装置のエネルギーが尽きています。拠点の充電器を強化するか、少し休んでください。");return}
+ S.energy--;S.runs++;
+ S.zone=Math.min(S.zone,maxZoneUnlocked());
+ const z=ZONES[S.zone], name=z.pool[Math.floor(Math.random()*z.pool.length)];
+ const rar=rollRarity(),q=quality(rar),key=S.zone+"|"+name;
+ const first=!S.items[key], old=S.items[key]?.quality||0, improved=q>old;
+ if(first){S.disc++;S.streak++;} else {S.streak=0}
+ if(rar[0]=="RARE"||rar[0]=="ANOMALY")S.rare++;
+ S.best=Math.max(S.best,q);
+ const reward=rar[3]+Math.floor(q/15);S.credits+=reward;S.xp+=rar[2]*10+(first?12:0);
+ if(first||improved)S.items[key]={name,zone:S.zone,rarity:rar[0],quality:q,count:(S.items[key]?.count||0)+1};
+ else S.items[key].count=(S.items[key].count||0)+1;
+ let line=`${first?"<span class='new'>NEW</span>":improved?"<span class='rare'>RECORD</span>":"再観測"}：<b>${name}</b> / ${rar[0]} / 品質 ${q}`;
+ addLog(line);
+ if(first)showDiscovery(name,rar[0],q,reward);
+ checkZoneUnlock(); save();render();
+}
+function survey(){
+ const cost=Math.max(8,16-S.scan*2);
+ if(S.credits<cost){showMsg("CREDITS不足",`広域スキャンには ${cost} credits 必要です。`);return}
+ S.credits-=cost;S.wide++;
+ const z=ZONES[S.zone];
+ const unseen=z.pool.filter(n=>!S.items[S.zone+"|"+n]);
+ if(unseen.length){
+   addLog(`広域スキャン：未記録反応を <span class='new'>${unseen.length}件</span> 検出。`);
+   showMsg("SCAN RESULT",`現在区画には、まだ ${unseen.length} 種類の未記録対象があります。`);
+ } else {addLog("広域スキャン：この区画の主要対象はすべて記録済み。");showMsg("SCAN RESULT","主要反応はすべて記録済み。次の区画へ進めます。")}
+ save();render();
+}
+function checkZoneUnlock(){
+ const m=maxZoneUnlocked();
+ if(m>S.zone){
+   addLog(`<span class='rare'>AREA UNLOCK</span>：${ZONES[m].name}`);
+ }
+}
+function showDiscovery(name,rar,q,reward){
+ document.getElementById("sheet").innerHTML=`<div class="sub">${rar}</div><div class="big">${rar=="ANOMALY"?"◈":"◇"}</div><h3>${name}</h3><p>新規アーカイブ登録。品質 <b>${q}</b> / 報酬 <b>${reward} credits</b></p><div class="quote">「記録されたものは、消えない。」</div><button class="btn primary" style="width:100%;margin-top:14px" onclick="hideModal()">保存して続行</button>`;
+ document.getElementById("modal").classList.add("show");
+}
+function showMsg(t,p){
+ document.getElementById("sheet").innerHTML=`<h3>${t}</h3><p>${p}</p><button class="btn primary" style="width:100%" onclick="hideModal()">閉じる</button>`;
+ document.getElementById("modal").classList.add("show");
+}
+function hideModal(){document.getElementById("modal").classList.remove("show")}
+function closeModal(e){if(e.target.id=="modal")hideModal()}
+function showView(n,b){
+ document.querySelectorAll(".view").forEach(x=>x.classList.remove("active"));document.getElementById("v-"+n).classList.add("active");
+ document.querySelectorAll(".nav button").forEach(x=>x.classList.remove("active"));b.classList.add("active");render();
+}
+function upgrade(type){
+ let cost;
+ if(type=="energy"){cost=40+(S.maxEnergy-6)*35;if(S.credits>=cost){S.credits-=cost;S.maxEnergy++;S.energy=S.maxEnergy}else return showMsg("CREDITS不足",`${cost} credits 必要です.`)}
+ if(type=="scan"){cost=70+(S.scan-1)*70;if(S.credits>=cost){S.credits-=cost;S.scan++}else return showMsg("CREDITS不足",`${cost} credits 必要です.`)}
+ if(type=="charge"){cost=10;if(S.credits>=cost){S.credits-=cost;S.energy=S.maxEnergy}else return showMsg("CREDITS不足","10 credits 必要です。")}
+ save();render()
+}
+function changeZone(i){if(i<=maxZoneUnlocked()){S.zone=i;addLog(`移動：${ZONES[i].name}`);save();render();showView('explore',document.querySelector(".nav button"))}}
+function exportSave(){navigator.clipboard?.writeText(btoa(unescape(encodeURIComponent(JSON.stringify(S)))));showMsg("SAVE COPIED","セーブコードをクリップボードへコピーしました。")}
+function resetGame(){if(confirm("すべての記録を初期化しますか？")){localStorage.removeItem("archive00-save");location.reload()}}
+function render(){
+ const lv=level(),inLv=S.xp%100,pct=completion(),mz=maxZoneUnlocked(); if(S.zone>mz)S.zone=mz;
+ document.getElementById("lv").textContent="Lv."+lv;document.getElementById("xpText").textContent=`${inLv} / 100 XP`;document.getElementById("xpBar").style.width=inLv+"%";
+ document.getElementById("pct").textContent=pct+"%";document.getElementById("ring").style.setProperty("--p",pct+"%");
+ document.getElementById("credits").textContent=S.credits;document.getElementById("discoveries").textContent=S.disc;document.getElementById("streak").textContent=S.streak;
+ document.getElementById("energyTag").textContent=`ENERGY ${S.energy}/${S.maxEnergy}`;document.getElementById("scanTag").textContent=`SCAN Lv.${S.scan}`;
+ document.getElementById("zoneName").textContent=ZONES[S.zone].name;document.getElementById("zoneDesc").textContent=ZONES[S.zone].desc;
+ document.getElementById("log").innerHTML=S.log.map(x=>`<div class="entry">${x}</div>`).join("");
+ const all=[];ZONES.forEach((z,zi)=>z.pool.forEach(name=>{const it=S.items[zi+"|"+name];all.push({zi,name,it})}));
+ document.getElementById("archiveList").innerHTML=all.map(x=>`<div class="item ${x.it?"":"locked"}"><div class="ico">${x.it?(x.it.rarity=="ANOMALY"?"◈":"◇"):"?"}</div><div><b>${x.it?x.name:"未発見"}</b><small>${x.it?`${ZONES[x.zi].name} / ${x.it.rarity} / 品質 ${x.it.quality} / 観測 ${x.it.count}回`:"探索して記録する"}</small></div></div>`).join("");
+ const eCost=40+(S.maxEnergy-6)*35,sCost=70+(S.scan-1)*70;
+ document.getElementById("upgrades").innerHTML=`
+ <div class="upg"><div><b>バッテリー Lv.${S.maxEnergy-5}</b><small class="sub">最大ENERGY +1</small></div><button onclick="upgrade('energy')">${eCost} C</button></div>
+ <div class="upg"><div><b>スキャナ Lv.${S.scan}</b><small class="sub">広域スキャン効率上昇</small></div><button onclick="upgrade('scan')">${sCost} C</button></div>
+ <div class="upg"><div><b>急速充電</b><small class="sub">ENERGYを全回復</small></div><button onclick="upgrade('charge')">10 C</button></div>`;
+ document.getElementById("zones").innerHTML=ZONES.map((z,i)=>`<div class="item ${i<=mz?"":"locked"}" onclick="${i<=mz?`changeZone(${i})`:''}"><div class="ico">${i<=mz?"⌖":"×"}</div><div><b>${z.name}</b><small>${i<=mz?z.desc:`発見数 ${z.unlock} で解禁`}</small></div></div>`).join("");
+ document.getElementById("sRuns").textContent=S.runs;document.getElementById("sRare").textContent=S.rare;document.getElementById("sBest").textContent=S.best;
+ document.getElementById("achievements").innerHTML=ACH.map(a=>`<div class="item ${a[1](S)?"":"locked"}"><div class="ico">${a[1](S)?"✓":"◇"}</div><div><b>${a[0]}</b><small>${a[1](S)?"解除済み":"未解除"}</small></div></div>`).join("");
+}
+setInterval(()=>{if(S.energy<S.maxEnergy){S.energy++;save();render()}},180000);
+render();
+</script>
+</body>
+</html>
