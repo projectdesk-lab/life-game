@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#071018">
+<link rel="manifest" href="./manifest.json">
+<title>FIELDLOG // 移動ログ</title>
+<style>
+:root{
+  --bg:#071018;--panel:#0e1824;--panel2:#132131;--line:#25384c;--text:#f4f7fb;--muted:#8fa4b8;
+  --a:#72e5b4;--b:#78b7ff;--warn:#ffc96a;--bad:#ff7f96;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-height:100%;background:radial-gradient(circle at 20% -10%,#14324a 0,#071018 40%);color:var(--text);
+font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic UI","Yu Gothic",sans-serif}
+button,input{font:inherit;color:inherit}
+.top{position:sticky;top:0;z-index:20;background:rgba(7,16,24,.82);backdrop-filter:blur(18px);border-bottom:1px solid #1f3040;padding:11px 14px}
+.head{max-width:880px;margin:auto;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.brand{font-weight:900;letter-spacing:.06em}.sub{font-size:11px;color:var(--muted);margin-top:2px}
+.badge{font-size:10px;padding:6px 9px;border:1px solid #34506a;border-radius:999px;background:#11202e}
+.wrap{max-width:880px;margin:auto;padding:14px 14px calc(112px + env(safe-area-inset-bottom))}
+.card{background:linear-gradient(180deg,rgba(15,25,38,.96),rgba(10,17,27,.96));border:1px solid var(--line);border-radius:20px;padding:14px;margin:10px 0;box-shadow:0 16px 36px rgba(0,0,0,.2)}
+h2{font-size:16px;margin:0 0 10px}.muted{font-size:12px;color:var(--muted);line-height:1.6}
+.row{display:flex;align-items:center;gap:10px}.between{justify-content:space-between}.grow{flex:1}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.kpi{background:var(--panel2);border:1px solid #24384d;border-radius:15px;padding:10px;text-align:center}
+.kpi b{display:block;font-size:20px;font-variant-numeric:tabular-nums}.kpi span{font-size:10px;color:var(--muted)}
+.big{font-size:34px;font-weight:900;line-height:1.05}.state{font-size:12px;font-weight:800}
+.ok{color:var(--a)}.warn{color:var(--warn)}.bad{color:var(--bad)}
+.btn{border:1px solid #35506b;background:#18283a;border-radius:14px;padding:13px 12px;font-weight:800}
+.btn.primary{background:linear-gradient(135deg,#17644f,#215f77);border-color:#4e9e8a}
+.btn.stop{background:linear-gradient(135deg,#65303b,#6a3b45);border-color:#a95b6c}
+.btn:active{transform:scale(.985)}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+canvas{width:100%;height:250px;border-radius:16px;background:#060b11;border:1px solid #203449;display:block}
+.tag{display:inline-block;font-size:10px;padding:4px 7px;margin:2px;border-radius:999px;background:#142234;border:1px solid #2b4259;color:#b9c8d6}
+.entry{padding:9px 0;border-bottom:1px solid #1e3041;font-size:12px;line-height:1.5}
+.log{max-height:240px;overflow:auto}.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+.code{padding:10px;background:#08101a;border:1px solid #253b52;border-radius:13px;word-break:break-all;font-size:10px;color:#9fcaff}
+.tabbar{position:fixed;z-index:30;left:0;right:0;bottom:0;background:rgba(7,16,24,.9);backdrop-filter:blur(18px);border-top:1px solid #1d3042;padding:8px 8px calc(8px + env(safe-area-inset-bottom))}
+.tabs{max-width:880px;margin:auto;display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.tabs button{border:0;background:transparent;color:#8499ad;padding:10px 2px;border-radius:12px;font-size:11px}.tabs button.active{background:#14263a;color:#fff}
+.view{display:none}.view.active{display:block}
+.pulse{width:9px;height:9px;border-radius:50%;background:var(--a);box-shadow:0 0 0 0 rgba(114,229,180,.5);animation:p 1.8s infinite}
+@keyframes p{70%{box-shadow:0 0 0 10px rgba(114,229,180,0)}100%{box-shadow:0 0 0 0 rgba(114,229,180,0)}}
+.hidden{display:none}
+</style>
+</head>
+<body>
+<div class="top"><div class="head">
+  <div><div class="brand">FIELDLOG</div><div class="sub">移動・チェックイン・整合性ログ</div></div>
+  <div class="badge" id="secure">HTTPS</div>
+</div></div>
+
+<div class="wrap">
+<section class="view active" id="v-live">
+  <div class="card">
+    <div class="row between">
+      <div><div class="sub">SESSION</div><div class="big" id="timer">00:00:00</div></div>
+      <div class="row"><div class="pulse hidden" id="pulse"></div><div class="state" id="status">停止中</div></div>
+    </div>
+    <div class="grid3" style="margin-top:12px">
+      <div class="kpi"><b id="distance">0.00</b><span>距離 km</span></div>
+      <div class="kpi"><b id="speed">--</b><span>速度 km/h</span></div>
+      <div class="kpi"><b id="accuracy">--</b><span>GPS精度 m</span></div>
+    </div>
+    <div class="actions">
+      <button class="btn primary" id="startBtn">記録開始</button>
+      <button class="btn stop" id="stopBtn" disabled>記録停止</button>
+    </div>
+    <div class="actions">
+      <button class="btn" id="checkBtn" disabled>今ここを記録</button>
+      <button class="btn" id="shareBtn" disabled>現在状況を共有</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>移動軌跡</h2>
+    <canvas id="track"></canvas>
+    <div class="muted" style="margin-top:8px">地図タイルは使わず、取得したGPS座標を端末内で相対軌跡として描画します。</div>
+  </div>
+
+  <div class="card">
+    <h2>センサー融合</h2>
+    <div class="grid3">
+      <div class="kpi"><b id="motion">--</b><span>動き指数</span></div>
+      <div class="kpi"><b id="heading">--</b><span>方位 °</span></div>
+      <div class="kpi"><b id="pose">--</b><span>端末姿勢</span></div>
+    </div>
+    <div class="entry row between"><span>推定状態</span><b id="movement">待機</b></div>
+    <div class="entry row between"><span>Wake Lock</span><b id="wake">OFF</b></div>
+  </div>
+</section>
+
+<section class="view" id="v-check">
+  <div class="card">
+    <h2>チェックポイント</h2>
+    <div class="muted">各記録は「前のハッシュ + 時刻 + GPS + センサー情報」からSHA-256を生成し、チェーン化します。これは改変検知の補助であり、第三者による位置証明ではありません。</div>
+    <div class="actions">
+      <button class="btn primary" id="checkBtn2" disabled>チェックポイント追加</button>
+      <button class="btn" id="copyLast">最新署名をコピー</button>
+    </div>
+    <div class="code mono" id="lastHash" style="margin-top:10px">未生成</div>
+  </div>
+  <div class="card">
+    <h2>最新位置</h2>
+    <div class="grid3">
+      <div class="kpi"><b id="lat">--</b><span>LAT</span></div>
+      <div class="kpi"><b id="lon">--</b><span>LON</span></div>
+      <div class="kpi"><b id="gpsTime">--</b><span>GPS時刻</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="view" id="v-history">
+  <div class="card">
+    <div class="row between"><h2>保存済みセッション</h2><span class="tag" id="sessionCount">0件</span></div>
+    <div id="history"></div>
+  </div>
+  <div class="card">
+    <h2>エクスポート</h2>
+    <div class="muted">現在セッションをJSONまたはCSVで保存できます。共有シート対応端末ではそのまま送信できます。</div>
+    <div class="actions">
+      <button class="btn" id="exportJson">JSON</button>
+      <button class="btn" id="exportCsv">CSV</button>
+    </div>
+  </div>
+</section>
+
+<section class="view" id="v-system">
+  <div class="card">
+    <h2>システム状態</h2>
+    <div class="entry row between"><span>ネットワーク</span><b id="network">-</b></div>
+    <div class="entry row between"><span>Service Worker</span><b id="sw">-</b></div>
+    <div class="entry row between"><span>IndexedDB</span><b id="db">-</b></div>
+    <div class="entry row between"><span>センサー権限</span><b id="sensorPerm">未要求</b></div>
+    <div class="entry row between"><span>位置権限</span><b id="geoPerm">未要求</b></div>
+  </div>
+  <div class="card">
+    <h2>実装技術</h2>
+    <span class="tag">Geolocation watchPosition</span><span class="tag">DeviceMotion</span><span class="tag">DeviceOrientation</span>
+    <span class="tag">Canvas</span><span class="tag">Web Crypto SHA-256</span><span class="tag">Hash Chain</span>
+    <span class="tag">IndexedDB</span><span class="tag">Service Worker</span><span class="tag">PWA</span>
+    <span class="tag">Wake Lock</span><span class="tag">Web Share</span><span class="tag">Offline Cache</span>
+  </div>
+  <div class="card">
+    <h2>ログ</h2><div class="log" id="log"></div>
+  </div>
+</section>
+</div>
+
+<div class="tabbar"><div class="tabs">
+  <button class="active" data-v="live">LIVE</button>
+  <button data-v="check">CHECK</button>
+  <button data-v="history">HISTORY</button>
+  <button data-v="system">SYSTEM</button>
+</div></div>
+
+<script>
+const $=id=>document.getElementById(id);
+const S={
+ active:false,startAt:null,watchId:null,points:[],checkpoints:[],distance:0,lastPos:null,lastHash:"",
+ beta:0,gamma:0,heading:null,motionIndex:0,lastMotionAt:0,wakeLock:null
+};
+const logs=[];
+function log(m,c=""){logs.unshift({t:new Date().toLocaleTimeString("ja-JP",{hour12:false}),m,c});logs.splice(80);renderLog()}
+function renderLog(){$("log").innerHTML=logs.map(x=>'<div class="entry '+x.c+'"><span class="mono">'+x.t+'</span> '+x.m+'</div>').join("")}
+document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>{document.querySelectorAll(".tabs button").forEach(x=>x.classList.remove("active"));b.classList.add("active");document.querySelectorAll(".view").forEach(x=>x.classList.remove("active"));$("v-"+b.dataset.v).classList.add("active");if(b.dataset.v==="history")renderHistory()});
+$("secure").textContent=location.protocol==="https:"?"HTTPS / SECURE":"LOCAL";
+function hav(a,b){const R=6371,rad=x=>x*Math.PI/180,dLat=rad(b.lat-a.lat),dLon=rad(b.lon-a.lon),q=Math.sin(dLat/2)**2+Math.cos(rad(a.lat))*Math.cos(rad(b.lat))*Math.sin(dLon/2)**2;return R*2*Math.atan2(Math.sqrt(q),Math.sqrt(1-q))}
+function fmtDur(ms){const s=Math.max(0,Math.floor(ms/1000)),h=String(Math.floor(s/3600)).padStart(2,"0"),m=String(Math.floor((s%3600)/60)).padStart(2,"0"),ss=String(s%60).padStart(2,"0");return h+":"+m+":"+ss}
+function updateClock(){if(S.active)$("timer").textContent=fmtDur(Date.now()-S.startAt);$("network").textContent=navigator.onLine?"ONLINE":"OFFLINE";$("movement").textContent=Date.now()-S.lastMotionAt<1400?"移動反応あり":"静止寄り"}
+setInterval(updateClock,500);updateClock();
+
+const cvs=$("track"),ctx=cvs.getContext("2d");
+function resize(){const dpr=Math.min(devicePixelRatio||1,2),r=cvs.getBoundingClientRect();cvs.width=r.width*dpr;cvs.height=r.height*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);drawTrack()}
+addEventListener("resize",resize);resize();
+function drawTrack(){
+ const r=cvs.getBoundingClientRect();ctx.clearRect(0,0,r.width,r.height);ctx.fillStyle="#060b11";ctx.fillRect(0,0,r.width,r.height);
+ ctx.strokeStyle="#16314a";ctx.lineWidth=1;for(let x=0;x<r.width;x+=32){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,r.height);ctx.stroke()}for(let y=0;y<r.height;y+=32){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(r.width,y);ctx.stroke()}
+ if(S.points.length<1){ctx.fillStyle="#7890a5";ctx.font="13px -apple-system";ctx.fillText("記録開始後、軌跡がここに描画されます",18,28);return}
+ const lats=S.points.map(p=>p.lat),lons=S.points.map(p=>p.lon),minLa=Math.min(...lats),maxLa=Math.max(...lats),minLo=Math.min(...lons),maxLo=Math.max(...lons);
+ const pad=22,dx=Math.max(maxLo-minLo,.00005),dy=Math.max(maxLa-minLa,.00005),map=p=>({x:pad+(p.lon-minLo)/dx*(r.width-pad*2),y:r.height-pad-(p.lat-minLa)/dy*(r.height-pad*2)});
+ ctx.lineWidth=3;ctx.strokeStyle="#72e5b4";ctx.beginPath();S.points.forEach((p,i)=>{const q=map(p);i?ctx.lineTo(q.x,q.y):ctx.moveTo(q.x,q.y)});ctx.stroke();
+ const a=map(S.points[0]),z=map(S.points[S.points.length-1]);ctx.fillStyle="#78b7ff";ctx.beginPath();ctx.arc(a.x,a.y,5,0,Math.PI*2);ctx.fill();ctx.fillStyle="#72e5b4";ctx.beginPath();ctx.arc(z.x,z.y,6,0,Math.PI*2);ctx.fill()
+}
+function updatePosition(p){
+ const c=p.coords,point={lat:c.latitude,lon:c.longitude,acc:c.accuracy,speed:c.speed,heading:c.heading,t:p.timestamp};
+ if(S.lastPos && c.accuracy<100){const d=hav(S.lastPos,point);if(d<2)S.distance+=d}
+ S.lastPos=point;S.points.push(point);if(S.points.length>1500)S.points.shift();
+ $("distance").textContent=S.distance.toFixed(2);$("speed").textContent=c.speed==null?"--":Math.max(0,c.speed*3.6).toFixed(1);$("accuracy").textContent=Math.round(c.accuracy);
+ $("lat").textContent=c.latitude.toFixed(5);$("lon").textContent=c.longitude.toFixed(5);$("gpsTime").textContent=new Date(p.timestamp).toLocaleTimeString("ja-JP",{hour12:false});
+ drawTrack();
+}
+function geoError(e){$("geoPerm").textContent="ERROR";log("位置情報エラー: "+e.message,"bad")}
+async function requestSensors(){
+ try{
+  if(typeof DeviceMotionEvent!=="undefined"&&typeof DeviceMotionEvent.requestPermission==="function"){const r=await DeviceMotionEvent.requestPermission();if(r!=="granted")throw new Error("Motion denied")}
+  if(typeof DeviceOrientationEvent!=="undefined"&&typeof DeviceOrientationEvent.requestPermission==="function"){const r=await DeviceOrientationEvent.requestPermission();if(r!=="granted")throw new Error("Orientation denied")}
+  addEventListener("devicemotion",e=>{const a=e.accelerationIncludingGravity||{},x=a.x||0,y=a.y||0,z=a.z||0,g=Math.sqrt(x*x+y*y+z*z)/9.80665;S.motionIndex=Math.abs(g-1);$("motion").textContent=S.motionIndex.toFixed(2);if(S.motionIndex>.10)S.lastMotionAt=Date.now()},true);
+  addEventListener("deviceorientation",e=>{S.beta=e.beta||0;S.gamma=e.gamma||0;S.heading=e.webkitCompassHeading??e.alpha??null;$("heading").textContent=S.heading==null?"--":Math.round(S.heading);const ab=Math.abs(S.beta),ag=Math.abs(S.gamma);$("pose").textContent=ab<12&&ag<12?"水平":ag>40?"横傾斜":ab>40?"縦傾斜":"傾斜"},true);
+  $("sensorPerm").textContent="OK";log("モーション/方位センサー接続","ok");
+ }catch(e){$("sensorPerm").textContent="DENIED";log("センサー権限: "+e.message,"bad")}
+}
+async function wakeOn(){try{if("wakeLock"in navigator){S.wakeLock=await navigator.wakeLock.request("screen");$("wake").textContent="ON";S.wakeLock.addEventListener("release",()=>{$("wake").textContent="OFF"})}}catch(e){log("Wake Lock利用不可","warn")}}
+async function start(){
+ if(S.active)return;
+ S.active=true;S.startAt=Date.now();S.points=[];S.checkpoints=[];S.distance=0;S.lastPos=null;S.lastHash="";
+ $("status").textContent="記録中";$("status").className="state ok";$("pulse").classList.remove("hidden");$("startBtn").disabled=true;$("stopBtn").disabled=false;$("checkBtn").disabled=false;$("checkBtn2").disabled=false;$("shareBtn").disabled=false;
+ await requestSensors();await wakeOn();
+ if(navigator.geolocation){$("geoPerm").textContent="要求中";S.watchId=navigator.geolocation.watchPosition(p=>{$("geoPerm").textContent="OK";updatePosition(p)},geoError,{enableHighAccuracy:true,maximumAge:2000,timeout:12000})}
+ log("移動セッション開始","ok");
+}
+async function stop(){
+ if(!S.active)return;
+ S.active=false;if(S.watchId!=null)navigator.geolocation.clearWatch(S.watchId);S.watchId=null;if(S.wakeLock){try{await S.wakeLock.release()}catch{}S.wakeLock=null}
+ $("status").textContent="停止中";$("status").className="state";$("pulse").classList.add("hidden");$("startBtn").disabled=false;$("stopBtn").disabled=true;$("checkBtn").disabled=true;$("checkBtn2").disabled=true;$("shareBtn").disabled=true;
+ await saveSession();log("移動セッション保存","ok");
+}
+$("startBtn").onclick=start;$("stopBtn").onclick=stop;
+async function sha(text){const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(text));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("")}
+async function checkpoint(){
+ if(!S.active||!S.lastPos){log("GPS取得前です","warn");return}
+ const cp={id:S.checkpoints.length+1,time:new Date().toISOString(),lat:+S.lastPos.lat.toFixed(6),lon:+S.lastPos.lon.toFixed(6),accuracy:Math.round(S.lastPos.acc),speed:S.lastPos.speed==null?null:+(S.lastPos.speed*3.6).toFixed(1),heading:S.heading==null?null:+S.heading.toFixed(1),motion:+S.motionIndex.toFixed(3),prev:S.lastHash||"GENESIS"};
+ cp.hash=await sha(JSON.stringify(cp));S.lastHash=cp.hash;S.checkpoints.push(cp);$("lastHash").textContent=cp.hash;log("チェックポイント #"+cp.id+" 署名済み","ok");
+}
+$("checkBtn").onclick=checkpoint;$("checkBtn2").onclick=checkpoint;$("copyLast").onclick=async()=>{if(S.lastHash){await navigator.clipboard?.writeText(S.lastHash);log("最新署名をコピー","ok")}};
+$("shareBtn").onclick=async()=>{
+ if(!S.lastPos)return;
+ const txt="FIELDLOG\n"+new Date().toLocaleString("ja-JP")+"\n位置: "+S.lastPos.lat.toFixed(5)+","+S.lastPos.lon.toFixed(5)+"\n精度: ±"+Math.round(S.lastPos.acc)+"m\n経過: "+fmtDur(Date.now()-S.startAt)+"\n距離: "+S.distance.toFixed(2)+"km";
+ try{if(navigator.share)await navigator.share({title:"FIELDLOG",text:txt});else{await navigator.clipboard.writeText(txt);log("共有文をコピー","ok")}}catch{}
+};
+
+let db;
+function openDB(){return new Promise((res,rej)=>{const q=indexedDB.open("fieldlog-db",1);q.onupgradeneeded=()=>{q.result.createObjectStore("sessions",{keyPath:"id"})};q.onsuccess=()=>{db=q.result;$("db").textContent="CONNECTED";res(db)};q.onerror=()=>rej(q.error)})}
+async function putSession(v){if(!db)await openDB();return new Promise((res,rej)=>{const tx=db.transaction("sessions","readwrite");tx.objectStore("sessions").put(v);tx.oncomplete=res;tx.onerror=()=>rej(tx.error)})}
+async function allSessions(){if(!db)await openDB();return new Promise((res,rej)=>{const q=db.transaction("sessions").objectStore("sessions").getAll();q.onsuccess=()=>res(q.result||[]);q.onerror=()=>rej(q.error)})}
+async function saveSession(){
+ const obj=currentSession();obj.id=String(S.startAt);obj.endAt=Date.now();await putSession(obj);renderHistory()
+}
+function currentSession(){return {startAt:S.startAt,endAt:S.active?Date.now():null,distanceKm:+S.distance.toFixed(4),points:S.points,checkpoints:S.checkpoints,finalHash:S.lastHash}}
+async function renderHistory(){try{const arr=(await allSessions()).sort((a,b)=>b.startAt-a.startAt);$("sessionCount").textContent=arr.length+"件";$("history").innerHTML=arr.length?arr.map(s=>'<div class="entry"><b>'+new Date(s.startAt).toLocaleString("ja-JP")+'</b><br><span class="muted">距離 '+(s.distanceKm||0).toFixed(2)+' km / '+(s.checkpoints?.length||0)+' checkpoints / '+fmtDur((s.endAt||s.startAt)-s.startAt)+'</span></div>').join(""):'<div class="muted">まだ保存セッションはありません。</div>'}catch(e){log("履歴読込エラー","bad")}}
+openDB().then(()=>renderHistory()).catch(e=>{$("db").textContent="ERROR";log("IndexedDBエラー: "+e.message,"bad")});
+
+function download(name,type,text){const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([text],{type}));a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
+$("exportJson").onclick=()=>{const obj=currentSession();download("fieldlog-"+Date.now()+".json","application/json",JSON.stringify(obj,null,2));log("JSONを書き出し","ok")};
+$("exportCsv").onclick=()=>{const rows=[["time","lat","lon","accuracy_m","speed_kmh","heading_deg"]];for(const p of S.points)rows.push([new Date(p.t).toISOString(),p.lat,p.lon,p.acc,p.speed==null?"":(p.speed*3.6).toFixed(1),p.heading??""]);download("fieldlog-"+Date.now()+".csv","text/csv;charset=utf-8","\uFEFF"+rows.map(r=>r.join(",")).join("\n"));log("CSVを書き出し","ok")};
+
+addEventListener("online",()=>log("ネットワーク復帰","ok"));addEventListener("offline",()=>log("オフラインへ移行","warn"));
+document.addEventListener("visibilitychange",async()=>{if(document.visibilityState==="visible"&&S.active&&!S.wakeLock)await wakeOn()});
+if("serviceWorker"in navigator){navigator.serviceWorker.register("./sw.js").then(()=>{$("sw").textContent="ACTIVE";log("Service Worker登録","ok")}).catch(e=>{$("sw").textContent="ERROR";log("SWエラー: "+e.message,"bad")})}else $("sw").textContent="N/A";
+log("FIELDLOG起動","ok");
+</script>
+</body>
+</html>
