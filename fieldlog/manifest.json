@@ -1,0 +1,9 @@
+{
+  "name": "FIELDLOG",
+  "short_name": "FIELDLOG",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#071018",
+  "theme_color": "#071018",
+  "description": "GPS・モーション・ハッシュチェーンを使う移動ログPWA"
+}
