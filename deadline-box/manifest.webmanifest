@@ -1,0 +1,14 @@
+{
+  "name":"期限BOX",
+  "short_name":"期限BOX",
+  "description":"食品・クーポン・返品・チケットなどの期限をまとめて管理するスマホ向けアプリ",
+  "start_url":"./",
+  "scope":"./",
+  "display":"standalone",
+  "background_color":"#08111f",
+  "theme_color":"#0b1220",
+  "lang":"ja",
+  "icons":[
+    {"src":"./icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any"}
+  ]
+}
