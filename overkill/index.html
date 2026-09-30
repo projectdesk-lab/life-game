@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#07090f">
+<link rel="manifest" href="./manifest.json">
+<title>OVERKILL//POCKET LAB</title>
+<style>
+:root{
+  --bg:#07090f;--p:#101623;--p2:#151d2d;--line:#27344c;--text:#f4f7fb;--muted:#8ea0b8;
+  --a:#79f2c0;--b:#7fb7ff;--c:#ffcc6a;--r:#ff7d95;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-height:100%;background:radial-gradient(circle at 20% 0,#0f1c2f 0,#07090f 42%);color:var(--text);
+font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic UI","Yu Gothic",sans-serif}
+body{overflow-x:hidden}
+button,input{font:inherit;color:inherit}
+.top{position:sticky;top:0;z-index:20;background:rgba(7,9,15,.78);backdrop-filter:blur(18px);border-bottom:1px solid #1d2636;padding:12px 14px}
+.head{max-width:920px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{font-weight:900;letter-spacing:.08em}.sub{font-size:11px;color:var(--muted);margin-top:2px}
+.pill{font-size:11px;padding:6px 9px;border:1px solid #33415b;background:#111827;border-radius:999px}
+.wrap{max-width:920px;margin:auto;padding:14px 14px 120px}
+.hero{display:grid;grid-template-columns:1.2fr .8fr;gap:12px}
+@media(max-width:720px){.hero{grid-template-columns:1fr}}
+.card{background:linear-gradient(180deg,rgba(17,23,36,.95),rgba(11,15,24,.95));border:1px solid var(--line);border-radius:20px;padding:14px;margin:10px 0;box-shadow:0 18px 40px rgba(0,0,0,.18)}
+h2{font-size:16px;margin:0 0 10px}.muted{color:var(--muted);font-size:12px;line-height:1.6}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.kpi{background:var(--p2);border:1px solid #253149;border-radius:15px;padding:10px;text-align:center}
+.kpi b{display:block;font-size:20px;font-variant-numeric:tabular-nums}.kpi span{font-size:10px;color:var(--muted)}
+.btn{border:1px solid #34445f;background:#1a2435;border-radius:14px;padding:12px 13px;font-weight:800}
+.btn.primary{background:linear-gradient(135deg,#17614e,#235c71);border-color:#4d9e8d}
+.btn.warn{background:linear-gradient(135deg,#5e381b,#6c4821);border-color:#a16d2d}
+.btn:active{transform:scale(.985)}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+canvas{width:100%;height:260px;border-radius:16px;background:#05070b;border:1px solid #1c2a3e;display:block}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.row{display:flex;align-items:center;gap:10px}.between{justify-content:space-between}.grow{flex:1}
+.meter{height:8px;background:#202b3e;border-radius:999px;overflow:hidden}.meter i{display:block;height:100%;background:linear-gradient(90deg,var(--a),var(--b))}
+.tag{display:inline-block;padding:4px 7px;border-radius:999px;background:#172131;border:1px solid #2b3a51;color:#b9c5d4;font-size:10px;margin:2px}
+.log{max-height:180px;overflow:auto;border-top:1px solid #202b3c;margin-top:8px}.entry{padding:8px 0;border-bottom:1px solid #1d2736;font-size:12px;line-height:1.5}
+.ok{color:var(--a)}.warnTxt{color:var(--c)}.bad{color:var(--r)}
+.range{width:100%}
+.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:30;background:rgba(7,9,15,.9);backdrop-filter:blur(18px);border-top:1px solid #20293a;padding:8px 8px calc(8px + env(safe-area-inset-bottom))}
+.tabs{max-width:920px;margin:auto;display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.tabs button{border:0;background:transparent;color:#8594aa;padding:10px 2px;border-radius:12px;font-size:11px}
+.tabs button.active{background:#162033;color:#fff}
+.view{display:none}.view.active{display:block}
+.big{font-size:32px;font-weight:900;letter-spacing:.02em}
+.codebox{padding:12px;background:#0b0f17;border:1px solid #243046;border-radius:14px;word-break:break-all;font-size:11px;color:#9bc7ff}
+.switch{appearance:none;width:46px;height:26px;border-radius:999px;background:#263247;position:relative;transition:.2s}
+.switch:checked{background:#1f6a56}.switch:after{content:"";position:absolute;width:20px;height:20px;border-radius:50%;background:#fff;top:3px;left:3px;transition:.2s}.switch:checked:after{left:23px}
+</style>
+</head>
+<body>
+<div class="top">
+  <div class="head">
+    <div><div class="brand">OVERKILL//POCKET LAB</div><div class="sub">技術の無駄遣い・全部入り実験端末</div></div>
+    <div class="pill" id="secureBadge">SECURE</div>
+  </div>
+</div>
+
+<div class="wrap">
+<section class="view active" id="v-live">
+  <div class="hero">
+    <div class="card">
+      <div class="row between"><div><div class="sub">LIVE SENSOR FUSION</div><div class="big" id="motionState">STANDBY</div></div><span class="tag" id="motionTag">MOTION OFF</span></div>
+      <canvas id="field"></canvas>
+      <div class="grid3" style="margin-top:10px">
+        <div class="kpi"><b id="pitch">0.0°</b><span>PITCH</span></div>
+        <div class="kpi"><b id="roll">0.0°</b><span>ROLL</span></div>
+        <div class="kpi"><b id="accel">0.00</b><span>ACCEL g</span></div>
+      </div>
+      <div class="actions">
+        <button class="btn primary" id="sensorBtn">センサー起動</button>
+        <button class="btn" id="zeroBtn">姿勢をゼロ校正</button>
+      </div>
+    </div>
+
+    <div>
+      <div class="card">
+        <h2>端末状態</h2>
+        <div class="entry row between"><span>ネットワーク</span><b id="net">-</b></div>
+        <div class="entry row between"><span>画面</span><b id="screen">-</b></div>
+        <div class="entry row between"><span>時刻</span><b id="clock">-</b></div>
+        <div class="entry row between"><span>セッション</span><b id="sessionTime">0s</b></div>
+      </div>
+      <div class="card">
+        <h2>入力→可視化→音響変換</h2>
+        <div class="muted">端末の傾きを粒子場とシンセサイザーへリアルタイム反映します。</div>
+        <div class="row between" style="margin-top:10px"><span>SONIFICATION</span><input class="switch" type="checkbox" id="soundToggle"></div>
+        <div style="margin-top:10px"><span class="sub">感度</span><input id="sensitivity" class="range" type="range" min="0.4" max="2.5" value="1.2" step="0.1"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="view" id="v-space">
+  <div class="card">
+    <h2>GEO / 空間コンテキスト</h2>
+    <div class="muted">位置情報は端末内でのみ使用。保存時は座標を丸め、セッション署名に変換します。</div>
+    <div class="grid3" style="margin-top:10px">
+      <div class="kpi"><b id="lat">--</b><span>LAT</span></div>
+      <div class="kpi"><b id="lon">--</b><span>LON</span></div>
+      <div class="kpi"><b id="accuracy">--</b><span>ACCURACY m</span></div>
+    </div>
+    <div class="actions">
+      <button class="btn primary" id="geoBtn">現在地を取得</button>
+      <button class="btn" id="copyGeoBtn">丸めた座標をコピー</button>
+    </div>
+  </div>
+  <div class="card">
+    <h2>環境推定</h2>
+    <div class="entry row between"><span>方位</span><b id="heading">--</b></div>
+    <div class="entry row between"><span>移動推定</span><b id="movement">静止</b></div>
+    <div class="entry row between"><span>端末姿勢</span><b id="pose">水平</b></div>
+  </div>
+</section>
+
+<section class="view" id="v-crypto">
+  <div class="card">
+    <h2>CRYPTO / セッション署名</h2>
+    <div class="muted">Web Crypto APIで、この端末上のセッション情報からSHA-256署名を生成します。</div>
+    <div class="actions">
+      <button class="btn primary" id="hashBtn">署名を生成</button>
+      <button class="btn" id="copyHashBtn">コピー</button>
+    </div>
+    <div class="codebox mono" id="hashOut" style="margin-top:10px">未生成</div>
+  </div>
+  <div class="card">
+    <h2>ローカル保存</h2>
+    <div class="muted">設定・校正値・最終署名はIndexedDBへ保存。ページ再読込後も復元されます。</div>
+    <div class="entry row between"><span>DB状態</span><b id="dbState">未接続</b></div>
+    <div class="entry row between"><span>保存回数</span><b id="saveCount">0</b></div>
+    <div class="actions">
+      <button class="btn" id="saveBtn">現在状態を保存</button>
+      <button class="btn warn" id="clearBtn">保存を消去</button>
+    </div>
+  </div>
+</section>
+
+<section class="view" id="v-log">
+  <div class="card">
+    <div class="row between"><h2>イベントログ</h2><span class="tag" id="logCount">0</span></div>
+    <div class="log" id="log"></div>
+  </div>
+  <div class="card">
+    <h2>実装技術</h2>
+    <div>
+      <span class="tag">DeviceMotion</span><span class="tag">DeviceOrientation</span><span class="tag">Canvas</span>
+      <span class="tag">Web Audio API</span><span class="tag">Geolocation</span><span class="tag">Web Crypto</span>
+      <span class="tag">IndexedDB</span><span class="tag">Service Worker</span><span class="tag">PWA</span>
+      <span class="tag">Offline Cache</span><span class="tag">Adaptive Rendering</span>
+    </div>
+  </div>
+</section>
+</div>
+
+<div class="tabbar"><div class="tabs">
+  <button class="active" data-v="live">LIVE</button>
+  <button data-v="space">SPACE</button>
+  <button data-v="crypto">CRYPTO</button>
+  <button data-v="log">LOG</button>
+</div></div>
+
+<script>
+const $=id=>document.getElementById(id);
+const state={pitch:0,roll:0,accel:0,zeroB:0,zeroG:0,lat:null,lon:null,accuracy:null,heading:null,motionOn:false,started:Date.now(),hash:"",saveCount:0};
+const logs=[];
+function log(msg,type=""){logs.unshift({t:new Date().toLocaleTimeString("ja-JP",{hour12:false}),msg,type});logs.splice(50);renderLog();}
+function renderLog(){ $("log").innerHTML=logs.map(x=>'<div class="entry '+x.type+'"><span class="mono">'+x.t+'</span> '+x.msg+'</div>').join("");$("logCount").textContent=logs.length}
+function secure(){ $("secureBadge").textContent=location.protocol==="https:"?"HTTPS / SECURE":"LOCAL"; }
+secure();
+
+document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>{
+ document.querySelectorAll(".tabs button").forEach(x=>x.classList.remove("active"));b.classList.add("active");
+ document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));$("v-"+b.dataset.v).classList.add("active");
+});
+
+function updateEnv(){
+ $("net").textContent=navigator.onLine?"ONLINE":"OFFLINE";
+ $("screen").textContent=screen.width+"×"+screen.height;
+ $("clock").textContent=new Date().toLocaleTimeString("ja-JP",{hour12:false});
+ $("sessionTime").textContent=Math.floor((Date.now()-state.started)/1000)+"s";
+}
+setInterval(updateEnv,500);updateEnv();
+addEventListener("online",()=>{log("ネットワーク復帰","ok");updateEnv()});
+addEventListener("offline",()=>{log("オフラインへ移行","warnTxt");updateEnv()});
+
+let beta=0,gamma=0,ax=0,ay=0,az=0,lastMove=0;
+function handleOri(e){
+ beta=(e.beta||0)-state.zeroB; gamma=(e.gamma||0)-state.zeroG;
+ state.pitch=beta;state.roll=gamma;state.heading=e.webkitCompassHeading ?? e.alpha ?? null;
+ $("pitch").textContent=beta.toFixed(1)+"°";$("roll").textContent=gamma.toFixed(1)+"°";
+ $("heading").textContent=state.heading==null?"--":Math.round(state.heading)+"°";
+ const ar=Math.abs(beta),gr=Math.abs(gamma);
+ $("pose").textContent=ar<10&&gr<10?"水平":gr>35?"横傾斜":ar>35?"縦傾斜":"軽度傾斜";
+}
+function handleMot(e){
+ const a=e.accelerationIncludingGravity||{}; ax=a.x||0;ay=a.y||0;az=a.z||0;
+ state.accel=Math.sqrt(ax*ax+ay*ay+az*az)/9.80665;$("accel").textContent=state.accel.toFixed(2);
+ if(Math.abs(state.accel-1)>.16) lastMove=Date.now();
+ $("movement").textContent=Date.now()-lastMove<1200?"移動中":"静止";
+}
+async function requestSensors(){
+ try{
+   if(typeof DeviceMotionEvent!=="undefined"&&typeof DeviceMotionEvent.requestPermission==="function"){
+     const m=await DeviceMotionEvent.requestPermission(); if(m!=="granted") throw new Error("Motion denied");
+   }
+   if(typeof DeviceOrientationEvent!=="undefined"&&typeof DeviceOrientationEvent.requestPermission==="function"){
+     const o=await DeviceOrientationEvent.requestPermission(); if(o!=="granted") throw new Error("Orientation denied");
+   }
+   addEventListener("deviceorientation",handleOri,true);addEventListener("devicemotion",handleMot,true);
+   state.motionOn=true;$("motionState").textContent="LIVE";$("motionTag").textContent="MOTION ON";$("motionTag").classList.add("ok");
+   log("モーションセンサー接続","ok");
+ }catch(err){log("センサー権限エラー: "+err.message,"bad")}
+}
+$("sensorBtn").onclick=requestSensors;
+$("zeroBtn").onclick=()=>{state.zeroB+=beta;state.zeroG+=gamma;log("姿勢ゼロ校正を実行","ok")};
+
+const canvas=$("field"),ctx=canvas.getContext("2d");let particles=[];
+function resize(){const dpr=Math.min(devicePixelRatio||1,2),r=canvas.getBoundingClientRect();canvas.width=r.width*dpr;canvas.height=r.height*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);particles=Array.from({length:70},()=>({x:Math.random()*r.width,y:Math.random()*r.height,vx:0,vy:0,s:1+Math.random()*2}))}
+addEventListener("resize",resize);resize();
+function tick(){
+ const r=canvas.getBoundingClientRect(),sens=+$("sensitivity").value;ctx.fillStyle="rgba(5,7,11,.22)";ctx.fillRect(0,0,r.width,r.height);
+ const fx=(gamma/90)*0.03*sens,fy=(beta/180)*0.03*sens;
+ particles.forEach(p=>{p.vx=(p.vx+fx)*.985;p.vy=(p.vy+fy)*.985;p.x+=p.vx;p.y+=p.vy;if(p.x<0)p.x+=r.width;if(p.x>r.width)p.x-=r.width;if(p.y<0)p.y+=r.height;if(p.y>r.height)p.y-=r.height;ctx.fillStyle="rgba(121,242,192,.8)";ctx.beginPath();ctx.arc(p.x,p.y,p.s,0,Math.PI*2);ctx.fill()});
+ requestAnimationFrame(tick);
+}
+tick();
+
+let audioCtx=null,osc=null,gain=null;
+$("soundToggle").onchange=async e=>{
+ if(e.target.checked){
+   audioCtx=new (window.AudioContext||window.webkitAudioContext)();osc=audioCtx.createOscillator();gain=audioCtx.createGain();
+   osc.type="sine";gain.gain.value=.035;osc.connect(gain).connect(audioCtx.destination);osc.start();log("WebAudio音響化を開始","ok");
+ }else{if(osc){osc.stop();osc=null} if(audioCtx){audioCtx.close();audioCtx=null}log("音響化停止")}
+};
+setInterval(()=>{if(osc&&audioCtx){const f=220+Math.max(-90,Math.min(90,gamma))*3+Math.abs(beta)*1.5;osc.frequency.setTargetAtTime(f,audioCtx.currentTime,.05)}},60);
+
+$("geoBtn").onclick=()=>{
+ if(!navigator.geolocation){log("Geolocation非対応","bad");return}
+ navigator.geolocation.getCurrentPosition(p=>{
+  state.lat=p.coords.latitude;state.lon=p.coords.longitude;state.accuracy=p.coords.accuracy;
+  $("lat").textContent=state.lat.toFixed(5);$("lon").textContent=state.lon.toFixed(5);$("accuracy").textContent=Math.round(state.accuracy);
+  log("位置情報を取得（端末内のみ）","ok");
+ },e=>log("位置情報エラー: "+e.message,"bad"),{enableHighAccuracy:true,timeout:10000,maximumAge:5000});
+};
+$("copyGeoBtn").onclick=async()=>{if(state.lat==null)return;const t=state.lat.toFixed(3)+","+state.lon.toFixed(3);await navigator.clipboard?.writeText(t);log("丸めた座標をコピー","ok")};
+
+async function digest(text){
+ const data=new TextEncoder().encode(text);const hash=await crypto.subtle.digest("SHA-256",data);
+ return [...new Uint8Array(hash)].map(b=>b.toString(16).padStart(2,"0")).join("");
+}
+$("hashBtn").onclick=async()=>{
+ const payload={t:new Date().toISOString(),pitch:state.pitch.toFixed(2),roll:state.roll.toFixed(2),accel:state.accel.toFixed(3),
+ lat:state.lat==null?null:+state.lat.toFixed(3),lon:state.lon==null?null:+state.lon.toFixed(3),screen:[screen.width,screen.height],ua:navigator.userAgent.slice(0,80)};
+ state.hash=await digest(JSON.stringify(payload));$("hashOut").textContent=state.hash;log("SHA-256セッション署名生成","ok");
+};
+$("copyHashBtn").onclick=async()=>{if(!state.hash)return;await navigator.clipboard?.writeText(state.hash);log("署名をコピー","ok")};
+
+let db;
+function openDB(){return new Promise((res,rej)=>{const q=indexedDB.open("overkill-pocket-lab",1);q.onupgradeneeded=()=>{q.result.createObjectStore("kv")};q.onsuccess=()=>{db=q.result;$("dbState").textContent="CONNECTED";$("dbState").className="ok";res(db)};q.onerror=()=>rej(q.error)})}
+async function dbSet(k,v){if(!db)await openDB();return new Promise((res,rej)=>{const tx=db.transaction("kv","readwrite");tx.objectStore("kv").put(v,k);tx.oncomplete=res;tx.onerror=()=>rej(tx.error)})}
+async function dbGet(k){if(!db)await openDB();return new Promise((res,rej)=>{const q=db.transaction("kv").objectStore("kv").get(k);q.onsuccess=()=>res(q.result);q.onerror=()=>rej(q.error)})}
+async function restore(){try{await openDB();const s=await dbGet("state");if(s){state.zeroB=s.zeroB||0;state.zeroG=s.zeroG||0;state.hash=s.hash||"";state.saveCount=s.saveCount||0;$("hashOut").textContent=state.hash||"未生成";$("saveCount").textContent=state.saveCount;log("IndexedDBから状態復元","ok")}}catch(e){$("dbState").textContent="ERROR";log("DBエラー: "+e.message,"bad")}}
+restore();
+$("saveBtn").onclick=async()=>{state.saveCount++;await dbSet("state",{zeroB:state.zeroB,zeroG:state.zeroG,hash:state.hash,saveCount:state.saveCount});$("saveCount").textContent=state.saveCount;log("状態をIndexedDBへ保存","ok")};
+$("clearBtn").onclick=async()=>{if(!db)await openDB();const tx=db.transaction("kv","readwrite");tx.objectStore("kv").clear();tx.oncomplete=()=>{state.saveCount=0;state.hash="";$("saveCount").textContent="0";$("hashOut").textContent="未生成";log("ローカル保存を消去","warnTxt")}};
+
+if("serviceWorker" in navigator){navigator.serviceWorker.register("./sw.js").then(()=>log("Service Worker登録 / オフライン対応","ok")).catch(e=>log("SW登録失敗: "+e.message,"bad"))}
+log("OVERKILL//POCKET LAB 起動","ok");
+</script>
+</body>
+</html>
