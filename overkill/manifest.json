@@ -1,0 +1,9 @@
+{
+  "name": "OVERKILL Pocket Lab",
+  "short_name": "OVERKILL",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#07090f",
+  "theme_color": "#07090f",
+  "description": "技術の無駄遣い・全部入りスマホ実験端末"
+}
